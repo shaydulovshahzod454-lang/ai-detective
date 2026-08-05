@@ -1,0 +1,16 @@
+# ==== Backend (Python/Django) ====
+venv/
+__pycache__/
+*.pyc
+db.sqlite3
+media/
+.env
+
+# ==== Frontend (Node/React) ====
+node_modules/
+dist/
+frontend/.env
+
+# ==== Umumiy ====
+.DS_Store
+*.log
