@@ -32,9 +32,6 @@ class Scene(models.Model):
 
 
 class Character(models.Model):
-    """
-    Case ichidagi AI orqali jonlanadigan personaj.
-    """
     case = models.ForeignKey(Case, on_delete=models.CASCADE, related_name='characters')
     scene = models.ForeignKey(Scene, on_delete=models.SET_NULL, null=True, blank=True, related_name='characters')
 
@@ -44,6 +41,17 @@ class Character(models.Model):
     personality = models.TextField(help_text="Personajning xarakteri, gapirish uslubi")
     knowledge = models.TextField(help_text="Personaj biladigan haqiqiy ma'lumotlar")
     secrets = models.TextField(help_text="Personaj yashiradigan, oson aytmaydigan sirlar")
+
+    # ↓ YANGI MAYDONLAR
+    alibi = models.TextField(
+        blank=True,
+        help_text="Voqea kuni qayerda, qachon nima qilgani (vaqt bilan yozing, masalan: 20:00 — oshxonada edim)"
+    )
+    relationships = models.TextField(
+        blank=True,
+        help_text="Boshqa personajlar bilan munosabati (masalan: Xizmatkorni yoqtirmaydi, chunki...)"
+    )
+
     is_guilty = models.BooleanField(default=False, help_text="Bu personaj aybdormi?")
     lying_tendency = models.CharField(
         max_length=20,

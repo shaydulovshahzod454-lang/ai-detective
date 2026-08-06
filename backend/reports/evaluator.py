@@ -1,4 +1,29 @@
-from chat.ai_service import client  # avval yaratgan Groq klientidan foydalanamiz
+from chat.ai_service import client
+import json
+
+
+def sanitize_feedback(feedback, case, is_correct):
+    """
+    Agar o'yinchi XATO topgan bo'lsa, feedback matnida haqiqiy aybdorning
+    ismi tasodifan chiqib qolmaganini tekshiradi. Agar chiqsa — umumiy,
+    xavfsiz xabar bilan almashtiradi.
+
+    Bu — AI prompt'iga qo'shimcha, ikkinchi himoya qatlami: LLM 100%
+    ishonchli emas, shuning uchun eng kritik holatni (aybdor ismining
+    sizib chiqishi) kod darajasida ham tekshiramiz.
+    """
+    if is_correct:
+        return feedback
+
+    guilty_characters = case.characters.filter(is_guilty=True)
+    for character in guilty_characters:
+        if character.name.lower() in feedback.lower():
+            return (
+                "Bu safar noto'g'ri topdingiz. Personajlar bilan yana gaplashib, "
+                "ularning aytganlarini diqqat bilan qayta tahlil qiling."
+            )
+
+    return feedback
 
 
 def evaluate_report(case, accused_character_name, reasoning):
@@ -32,9 +57,7 @@ FEEDBACK YOZISHDA QATTIQ QOIDALAR:
   * qaysi personajga yoki qaysi mavzuga e'tibor berish kerakligini
     aniq ko'rsatish
   Faqat umumiy, hech qanday maxsus yo'nalish bermaydigan rag'batlantiruvchi
-  gap yoz — masalan "Bu safar noto'g'ri topdingiz. Personajlar bilan yana
-  gaplashib, ularning aytganlarini diqqat bilan qayta tahlil qiling."
-  kabi, va boshqa hech narsa qo'shma.
+  gap yoz.
 3. Qisqa va o'zbek tilida yoz.
 
 JAVOBINI FAQAT quyidagi JSON formatida qaytar, boshqa hech qanday matn yozma:
@@ -51,6 +74,11 @@ JAVOBINI FAQAT quyidagi JSON formatida qaytar, boshqa hech qanday matn yozma:
         response_format={"type": "json_object"},
     )
 
-    import json
     result = json.loads(response.choices[0].message.content)
-    return result['is_correct'], result['feedback']
+    is_correct = result['is_correct']
+    feedback = result['feedback']
+
+    # Ikkinchi himoya qatlami — kod darajasida tekshirish
+    feedback = sanitize_feedback(feedback, case, is_correct)
+
+    return is_correct, feedback
