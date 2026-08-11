@@ -1,19 +1,20 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 
 class Case(models.Model):
-    """
-    Bitta detektiv ish (masalan: "Qotillik villada").
-    Bu — o'yinning eng yuqori darajadagi obyekti.
-    """
-    title = models.CharField(max_length=200)  # ish nomi
-    description = models.TextField()          # o'yinchiga ko'rsatiladigan qisqacha voqea
-    solution = models.TextField()              # asl haqiqat — kim, nima uchun (AI hisobotni shu bilan solishtiradi)
-    is_active = models.BooleanField(default=True)  # o'yinda ko'rinsinmi yoki yo'q
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    solution = models.TextField()
+    is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    # ↓ YANGI MAYDON
+    created_by = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='created_cases',
+        null=True, blank=True   # eski case'lar uchun bo'sh qolishi mumkin
+    )
+
     def __str__(self):
-        # Django admin panelida va konsolda ob'ekt shu nom bilan ko'rinadi
         return self.title
 
 
@@ -86,3 +87,20 @@ class Clue(models.Model):
 
     def __str__(self):
         return f"{self.text[:50]}"
+
+class CaseCollaborator(models.Model):
+    """
+    Bitta case'ga qaysi foydalanuvchi tahrirlash huquqiga ega ekanini bildiradi.
+    Case egasi (created_by) bu yerda alohida yozilmaydi — u har doim
+    avtomatik ravishda to'liq huquqqa ega.
+    """
+    case = models.ForeignKey(Case, on_delete=models.CASCADE, related_name='collaborators')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='collaborations')
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        # Bir foydalanuvchi bitta case'ga faqat bir marta qo'shilishi mumkin
+        unique_together = ('case', 'user')
+
+    def __str__(self):
+        return f"{self.user.username} → {self.case.title}"

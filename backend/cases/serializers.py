@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import Case, Scene, Character, Clue
+from .models import Case, Scene, Character, Clue, CaseCollaborator
+from django.contrib.auth.models import User
 
 
 class CharacterListSerializer(serializers.ModelSerializer):
@@ -68,3 +69,31 @@ class CreateClueSerializer(serializers.Serializer):
     session_id = serializers.CharField(max_length=100)
     text = serializers.CharField(max_length=500)
     source_character_id = serializers.IntegerField(required=False, allow_null=True)
+
+class CaseCollaboratorSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username', read_only=True)
+
+    class Meta:
+        model = CaseCollaborator
+        fields = ['id', 'username', 'added_at']
+
+
+class MyCaseSerializer(serializers.ModelSerializer):
+    """
+    'Mening case'larim' ro'yxati uchun — muallif ekanligini ham ko'rsatadi.
+    """
+    is_owner = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Case
+        fields = ['id', 'title', 'description', 'is_active', 'is_owner']
+
+    def get_is_owner(self, obj):
+        request = self.context.get('request')
+        return obj.created_by_id == request.user.id
+
+
+class CreateCaseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Case
+        fields = ['title', 'description', 'solution']
