@@ -1,14 +1,16 @@
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, parser_classes
 from rest_framework.response import Response
 from rest_framework import status
 from django.db.models import Q
 from django.contrib.auth.models import User
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.parsers import MultiPartParser, FormParser
 
-from .models import Case, Clue, CaseCollaborator
+from .models import Case, Clue, CaseCollaborator, Scene, Character
 from .serializers import (
     CaseListSerializer, CaseDetailSerializer, ClueSerializer, 
-    CreateClueSerializer, CaseCollaboratorSerializer, MyCaseSerializer, CreateCaseSerializer
+    CreateClueSerializer, CaseCollaboratorSerializer, MyCaseSerializer, CreateCaseSerializer,
+    CaseEditSerializer, UpdateCaseSerializer, SceneEditSerializer, CharacterEditSerializer
 )
 from .permissions import IsCaseOwnerOrCollaborator
 
@@ -169,3 +171,160 @@ def remove_collaborator(request, case_id, collaborator_id):
 
     collaborator.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
+
+def _check_edit_permission(case, user):
+    """
+    Yordamchi funksiya: foydalanuvchi shu case'ni tahrirlay oladimi, tekshiradi.
+    Bir nechta view'da takrorlanmasligi uchun alohida chiqardik.
+    """
+    if case.created_by_id == user.id:
+        return True
+    return case.collaborators.filter(user=user).exists()
+
+
+@api_view(['GET', 'PATCH'])
+@permission_classes([IsAuthenticated])
+def case_edit(request, case_id):
+    """
+    GET — tahrirlash uchun to'liq ma'lumot (solution bilan birga).
+    PATCH — sarlavha/tavsif/yechimni yangilaydi.
+    Ikkalasi ham faqat egasi yoki hamkor uchun ruxsat etiladi.
+    """
+    try:
+        case = Case.objects.get(id=case_id)
+    except Case.DoesNotExist:
+        return Response({"error": "Case topilmadi"}, status=status.HTTP_404_NOT_FOUND)
+
+    if not _check_edit_permission(case, request.user):
+        return Response({"error": "Ruxsat yo'q"}, status=status.HTTP_403_FORBIDDEN)
+
+    if request.method == 'GET':
+        return Response(CaseEditSerializer(case).data)
+
+    # PATCH
+    serializer = UpdateCaseSerializer(case, data=request.data, partial=True)
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    serializer.save()
+    return Response(CaseEditSerializer(case).data)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def case_publish(request, case_id):
+    """
+    Case'ning is_active holatini almashtiradi (qoralama ↔ faol).
+    Faqat EGASI qila oladi — hamkorlar nashr qilish huquqiga ega emas,
+    bu qaror faqat asosiy muallifga tegishli.
+    """
+    try:
+        case = Case.objects.get(id=case_id)
+    except Case.DoesNotExist:
+        return Response({"error": "Case topilmadi"}, status=status.HTTP_404_NOT_FOUND)
+
+    if case.created_by_id != request.user.id:
+        return Response({"error": "Faqat case egasi nashr qila oladi"}, status=status.HTTP_403_FORBIDDEN)
+
+    case.is_active = not case.is_active
+    case.save()
+    return Response(CaseEditSerializer(case).data)
+
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
+@parser_classes([MultiPartParser, FormParser])   # rasm yuklash uchun kerak
+def scene_list_create(request, case_id):
+    try:
+        case = Case.objects.get(id=case_id)
+    except Case.DoesNotExist:
+        return Response({"error": "Case topilmadi"}, status=status.HTTP_404_NOT_FOUND)
+
+    if not _check_edit_permission(case, request.user):
+        return Response({"error": "Ruxsat yo'q"}, status=status.HTTP_403_FORBIDDEN)
+
+    if request.method == 'GET':
+        scenes = case.scenes.all()
+        serializer = SceneEditSerializer(scenes, many=True, context={'request': request})
+        return Response(serializer.data)
+
+    # POST
+    serializer = SceneEditSerializer(data=request.data)
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    scene = serializer.save(case=case)
+    return Response(SceneEditSerializer(scene, context={'request': request}).data, status=status.HTTP_201_CREATED)
+
+
+@api_view(['PATCH', 'DELETE'])
+@permission_classes([IsAuthenticated])
+@parser_classes([MultiPartParser, FormParser])
+def scene_detail_edit(request, case_id, scene_id):
+    try:
+        case = Case.objects.get(id=case_id)
+        scene = case.scenes.get(id=scene_id)
+    except (Case.DoesNotExist, Scene.DoesNotExist):
+        return Response({"error": "Topilmadi"}, status=status.HTTP_404_NOT_FOUND)
+
+    if not _check_edit_permission(case, request.user):
+        return Response({"error": "Ruxsat yo'q"}, status=status.HTTP_403_FORBIDDEN)
+
+    if request.method == 'DELETE':
+        scene.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    # PATCH
+    serializer = SceneEditSerializer(scene, data=request.data, partial=True)
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    serializer.save()
+    return Response(SceneEditSerializer(scene, context={'request': request}).data)
+
+
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
+@parser_classes([MultiPartParser, FormParser])
+def character_list_create(request, case_id):
+    try:
+        case = Case.objects.get(id=case_id)
+    except Case.DoesNotExist:
+        return Response({"error": "Case topilmadi"}, status=status.HTTP_404_NOT_FOUND)
+
+    if not _check_edit_permission(case, request.user):
+        return Response({"error": "Ruxsat yo'q"}, status=status.HTTP_403_FORBIDDEN)
+
+    if request.method == 'GET':
+        characters = case.characters.all()
+        serializer = CharacterEditSerializer(characters, many=True, context={'request': request})
+        return Response(serializer.data)
+
+    # POST
+    serializer = CharacterEditSerializer(data=request.data)
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    character = serializer.save(case=case)
+    return Response(CharacterEditSerializer(character, context={'request': request}).data, status=status.HTTP_201_CREATED)
+
+
+@api_view(['PATCH', 'DELETE'])
+@permission_classes([IsAuthenticated])
+@parser_classes([MultiPartParser, FormParser])
+def character_detail_edit(request, case_id, character_id):
+    try:
+        case = Case.objects.get(id=case_id)
+        character = case.characters.get(id=character_id)
+    except (Case.DoesNotExist, Character.DoesNotExist):
+        return Response({"error": "Topilmadi"}, status=status.HTTP_404_NOT_FOUND)
+
+    if not _check_edit_permission(case, request.user):
+        return Response({"error": "Ruxsat yo'q"}, status=status.HTTP_403_FORBIDDEN)
+
+    if request.method == 'DELETE':
+        character.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    # PATCH
+    serializer = CharacterEditSerializer(character, data=request.data, partial=True)
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    serializer.save()
+    return Response(CharacterEditSerializer(character, context={'request': request}).data)

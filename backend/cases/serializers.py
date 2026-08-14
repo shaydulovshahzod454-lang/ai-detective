@@ -97,3 +97,38 @@ class CreateCaseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Case
         fields = ['title', 'description', 'solution']
+
+class CaseEditSerializer(serializers.ModelSerializer):
+    """
+    Tahrirlash sahifasi uchun — 'solution' HAM ko'rinadi, chunki bu
+    yerga faqat egasi/hamkor kiradi (case_detail'dagi ommaviy
+    serializer'dan farqli, u yerda solution atayin yashirilgan edi).
+    """
+    class Meta:
+        model = Case
+        fields = ['id', 'title', 'description', 'solution', 'is_active']
+
+
+class UpdateCaseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Case
+        fields = ['title', 'description', 'solution']
+
+class SceneEditSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Scene
+        fields = ['id', 'name', 'description', 'background_image']
+
+
+class CharacterEditSerializer(serializers.ModelSerializer):
+    """
+    Tahrirlash uchun — BARCHA maydonlar ko'rinadi (knowledge, secrets ham),
+    chunki bu yerga faqat egasi/hamkor kiradi.
+    """
+    class Meta:
+        model = Character
+        fields = [
+            'id', 'name', 'image', 'scene',
+            'personality', 'knowledge', 'secrets',
+            'alibi', 'relationships', 'is_guilty', 'lying_tendency',
+        ]
