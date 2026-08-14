@@ -39,11 +39,10 @@ class Character(models.Model):
     name = models.CharField(max_length=100)
     image = models.ImageField(upload_to='characters/', blank=True, null=True)
 
-    personality = models.TextField(help_text="Personajning xarakteri, gapirish uslubi")
-    knowledge = models.TextField(help_text="Personaj biladigan haqiqiy ma'lumotlar")
-    secrets = models.TextField(help_text="Personaj yashiradigan, oson aytmaydigan sirlar")
+    personality = models.TextField(blank=True, help_text="Personajning xarakteri, gapirish uslubi")
+    knowledge = models.TextField(blank=True, help_text="Personaj biladigan haqiqiy ma'lumotlar")
+    secrets = models.TextField(blank=True, help_text="Personaj yashiradigan, oson aytmaydigan sirlar")
 
-    # ↓ YANGI MAYDONLAR
     alibi = models.TextField(
         blank=True,
         help_text="Voqea kuni qayerda, qachon nima qilgani (vaqt bilan yozing, masalan: 20:00 — oshxonada edim)"

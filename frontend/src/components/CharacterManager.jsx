@@ -26,9 +26,12 @@ function CharacterManager({ caseId }) {
   e.preventDefault();
   if (!newName.trim()) return;
   try {
-    const scene = await createScene(caseId, { name: newName, description: '' });
-    setScenes((prev) => [...prev, scene]);
+    const character = await createCharacter(caseId, {
+      name: newName, personality: '', knowledge: '', secrets: '',
+    });
+    setCharacters((prev) => [...prev, character]);
     setNewName('');
+    setExpandedId(character.id);
   } catch (err) {
     console.error(err.response?.data || err);
     alert("Xatolik yuz berdi, konsolni tekshiring.");
