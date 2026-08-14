@@ -25,7 +25,7 @@ class Scene(models.Model):
     """
     case = models.ForeignKey(Case, on_delete=models.CASCADE, related_name='scenes')
     name = models.CharField(max_length=100)          # masalan: "Kutubxona"
-    description = models.TextField()                  # xona haqida qisqacha matn
+    description = models.TextField(blank=True)                  # xona haqida qisqacha matn
     background_image = models.ImageField(upload_to='scenes/', blank=True, null=True)
 
     def __str__(self):

@@ -20,12 +20,17 @@ function SceneManager({ caseId }) {
   }
 
   async function handleAdd(e) {
-    e.preventDefault();
-    if (!newName.trim()) return;
+  e.preventDefault();
+  if (!newName.trim()) return;
+  try {
     const scene = await createScene(caseId, { name: newName, description: '' });
     setScenes((prev) => [...prev, scene]);
     setNewName('');
+  } catch (err) {
+    console.error(err.response?.data || err);
+    alert("Xatolik yuz berdi, konsolni tekshiring.");
   }
+}
 
   async function handleUpdate(sceneId, field, value) {
     const updated = await updateScene(caseId, sceneId, { [field]: value });

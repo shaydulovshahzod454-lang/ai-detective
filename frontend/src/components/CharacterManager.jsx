@@ -23,15 +23,17 @@ function CharacterManager({ caseId }) {
   }, []);
 
   async function handleAdd(e) {
-    e.preventDefault();
-    if (!newName.trim()) return;
-    const character = await createCharacter(caseId, {
-      name: newName, personality: '', knowledge: '', secrets: '',
-    });
-    setCharacters((prev) => [...prev, character]);
+  e.preventDefault();
+  if (!newName.trim()) return;
+  try {
+    const scene = await createScene(caseId, { name: newName, description: '' });
+    setScenes((prev) => [...prev, scene]);
     setNewName('');
-    setExpandedId(character.id);
+  } catch (err) {
+    console.error(err.response?.data || err);
+    alert("Xatolik yuz berdi, konsolni tekshiring.");
   }
+}
 
   async function handleUpdate(charId, field, value) {
     const updated = await updateCharacter(caseId, charId, { [field]: value });

@@ -4,7 +4,7 @@ from rest_framework import status
 from django.db.models import Q
 from django.contrib.auth.models import User
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 
 from .models import Case, Clue, CaseCollaborator, Scene, Character
 from .serializers import (
@@ -232,7 +232,7 @@ def case_publish(request, case_id):
 
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
-@parser_classes([MultiPartParser, FormParser])   # rasm yuklash uchun kerak
+@parser_classes([MultiPartParser, FormParser, JSONParser])   # rasm yuklash uchun kerak
 def scene_list_create(request, case_id):
     try:
         case = Case.objects.get(id=case_id)
@@ -257,7 +257,7 @@ def scene_list_create(request, case_id):
 
 @api_view(['PATCH', 'DELETE'])
 @permission_classes([IsAuthenticated])
-@parser_classes([MultiPartParser, FormParser])
+@parser_classes([MultiPartParser, FormParser, JSONParser])
 def scene_detail_edit(request, case_id, scene_id):
     try:
         case = Case.objects.get(id=case_id)
@@ -282,7 +282,7 @@ def scene_detail_edit(request, case_id, scene_id):
 
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
-@parser_classes([MultiPartParser, FormParser])
+@parser_classes([MultiPartParser, FormParser, JSONParser])
 def character_list_create(request, case_id):
     try:
         case = Case.objects.get(id=case_id)
@@ -307,7 +307,7 @@ def character_list_create(request, case_id):
 
 @api_view(['PATCH', 'DELETE'])
 @permission_classes([IsAuthenticated])
-@parser_classes([MultiPartParser, FormParser])
+@parser_classes([MultiPartParser, FormParser, JSONParser])
 def character_detail_edit(request, case_id, character_id):
     try:
         case = Case.objects.get(id=case_id)
