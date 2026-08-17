@@ -1,27 +1,31 @@
-.chat-page {
+.chat-page-layout {
+  display: flex;
+  gap: 24px;
+  max-width: 1000px;
   margin: 0 auto;
-  padding: 20px;
-  font-family: sans-serif;
-  color: #f0f0f0;
+  padding: 24px;
+}
+
+.chat-page {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  box-sizing: border-box;
+  height: calc(100vh - 48px);
+  min-width: 0;
 }
 
 .back-button {
-  background: none;
-  border: 1px solid #444;
-  color: #ccc;
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  color: var(--text-secondary);
   padding: 8px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-bottom: 15px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 16px;
   align-self: flex-start;
 }
-
 .back-button:hover {
-  background: #222;
+  background: var(--bg-hover);
+  color: var(--text-primary);
 }
 
 .chat-window {
@@ -29,95 +33,82 @@
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 10px 0;
+  gap: 12px;
+  padding: 10px 4px;
 }
 
 .chat-hint {
-  color: #777;
+  color: var(--text-muted);
   text-align: center;
-  margin-top: 40px;
+  margin-top: 60px;
 }
 
 .chat-bubble {
   max-width: 75%;
-  padding: 10px 15px;
-  border-radius: 14px;
-  line-height: 1.4;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  line-height: 1.5;
+}
+
+.chat-bubble p {
+  color: inherit;
+  margin: 0;
 }
 
 .chat-bubble.user {
   align-self: flex-end;
-  background: #2563eb;
+  background: var(--accent);
   color: white;
 }
 
 .chat-bubble.assistant {
   align-self: flex-start;
-  background: #262626;
-  color: #f0f0f0;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
 }
 
 .chat-bubble.typing {
-  color: #888;
+  color: var(--text-muted);
   font-style: italic;
+  background: transparent;
+  border: none;
+}
+
+.save-clue-button {
+  display: block;
+  margin-top: 8px;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.25);
+  color: inherit;
+  opacity: 0.75;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+}
+.save-clue-button:hover {
+  opacity: 1;
+  background: rgba(255,255,255,0.1);
 }
 
 .chat-input-area {
   display: flex;
   gap: 10px;
-  padding-top: 15px;
-  border-top: 1px solid #333;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
 }
 
 .chat-input-area textarea {
   flex: 1;
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #444;
-  background: #1a1a1a;
-  color: #f0f0f0;
   resize: none;
-  font-family: sans-serif;
 }
 
 .chat-input-area button {
-  padding: 0 20px;
-  border: none;
-  border-radius: 8px;
-  background: #2563eb;
+  padding: 0 22px;
+  background: var(--accent);
   color: white;
-  cursor: pointer;
+  border-radius: var(--radius-sm);
 }
-
-.chat-input-area button:disabled {
-  background: #444;
-  cursor: not-allowed;
-}
-
-/* .chat-page dagi max-width: 700px; qatorini o'chiring */
-
-.chat-page-layout {
-  display: flex;
-  gap: 20px;
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-.save-clue-button {
-  display: block;
-  margin-top: 6px;
-  background: none;
-  border: 1px solid #444;
-  color: #aaa;
-  font-size: 12px;
-  padding: 4px 8px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.save-clue-button:hover {
-  background: #333;
-  color: #fff;
+.chat-input-area button:hover {
+  background: var(--accent-hover);
 }

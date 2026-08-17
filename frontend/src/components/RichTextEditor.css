@@ -1,7 +1,7 @@
 .rich-editor {
-  border: 1px solid #444;
-  border-radius: 8px;
-  background: #1a1a1a;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-tertiary);
   overflow: hidden;
 }
 
@@ -9,33 +9,31 @@
   display: flex;
   gap: 4px;
   padding: 6px;
-  border-bottom: 1px solid #333;
-  background: #161616;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-secondary);
 }
 
 .rich-editor-toolbar button {
-  background: none;
-  border: 1px solid transparent;
-  color: #ccc;
-  padding: 4px 10px;
+  background: transparent;
+  color: var(--text-secondary);
+  padding: 5px 11px;
   border-radius: 5px;
-  cursor: pointer;
   font-size: 13px;
 }
-
 .rich-editor-toolbar button:hover {
-  background: #222;
+  background: var(--bg-hover);
+  color: var(--text-primary);
 }
-
 .rich-editor-toolbar button.active {
-  background: #2563eb;
+  background: var(--accent);
   color: white;
 }
 
 .rich-editor-content {
-  padding: 10px;
+  padding: 10px 12px;
   min-height: 80px;
-  color: #f0f0f0;
+  color: var(--text-primary);
+  font-size: 14px;
 }
 
 .rich-editor-content .ProseMirror {
@@ -44,7 +42,7 @@
 
 .rich-editor-content p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
-  color: #666;
+  color: var(--text-muted);
   float: left;
   pointer-events: none;
   height: 0;

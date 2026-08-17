@@ -2,50 +2,46 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 24px;
-  background: #161616;
-  border-bottom: 1px solid #2a2a2a;
-  font-family: sans-serif;
+  padding: 14px 28px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
 }
 
 .navbar-brand {
-  color: #fff;
+  color: var(--text-primary);
   text-decoration: none;
-  font-weight: bold;
-  font-size: 18px;
+  font-weight: 700;
+  font-size: 17px;
 }
 
 .navbar-links {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 18px;
 }
 
 .navbar-links a {
-  color: #ccc;
-  text-decoration: none;
+  color: var(--text-secondary);
   font-size: 14px;
 }
-
 .navbar-links a:hover {
-  color: #fff;
+  color: var(--text-primary);
 }
 
 .navbar-username {
-  color: #60a5fa;
+  color: var(--accent-hover);
   font-size: 14px;
+  font-weight: 500;
 }
 
 .navbar-links button {
-  background: none;
-  border: 1px solid #444;
-  color: #ccc;
-  padding: 6px 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  color: var(--text-secondary);
+  padding: 7px 14px;
+  border-radius: var(--radius-sm);
 }
-
 .navbar-links button:hover {
-  background: #222;
+  background: var(--bg-hover);
+  color: var(--text-primary);
 }

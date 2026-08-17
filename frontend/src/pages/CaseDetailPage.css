@@ -1,94 +1,102 @@
 .case-detail-page {
   max-width: 900px;
   margin: 0 auto;
-  padding: 40px 20px;
-  font-family: sans-serif;
-  color: #f0f0f0;
+  padding: 32px 24px;
 }
 
 .back-button {
-  background: none;
-  border: 1px solid #444;
-  color: #ccc;
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  color: var(--text-secondary);
   padding: 8px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-bottom: 20px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 24px;
 }
-
 .back-button:hover {
-  background: #222;
+  background: var(--bg-hover);
+  color: var(--text-primary);
 }
 
 .case-description {
-  color: #bbb;
-  margin-bottom: 30px;
+  color: var(--text-secondary);
+  margin: 12px 0 32px;
+  line-height: 1.6;
 }
 
 .scene-block {
-  margin-bottom: 40px;
-  padding: 20px;
-  background: #161616;
-  border-radius: 10px;
+  margin-bottom: 24px;
+  padding: 24px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
 }
 
 .scene-block h2 {
-  color: #fff;
-  margin-top: 0;
+  margin-bottom: 6px;
 }
 
 .scene-description {
-  color: #999;
+  color: var(--text-secondary);
   margin-bottom: 20px;
+  font-size: 14px;
 }
 
 .character-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 20px;
 }
 
 .character-card {
-  width: 120px;
+  width: 110px;
   text-align: center;
   cursor: pointer;
-  color: #f0f0f0;
 }
 
 .character-card img {
-  width: 100px;
-  height: 100px;
+  width: 88px;
+  height: 88px;
   object-fit: cover;
   border-radius: 50%;
-  border: 2px solid #333;
-  transition: border-color 0.15s;
+  border: 2px solid var(--border);
+  transition: border-color 0.15s, transform 0.15s;
 }
 
 .character-card:hover img,
 .character-card:hover .character-placeholder {
-  border-color: #888;
+  border-color: var(--accent);
+  transform: scale(1.04);
+}
+
+.character-card p {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--text-primary);
 }
 
 .character-placeholder {
-  width: 100px;
-  height: 100px;
+  width: 88px;
+  height: 88px;
   border-radius: 50%;
-  background: #2a2a2a;
-  border: 2px solid #333;
+  background: var(--bg-tertiary);
+  border: 2px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 40px;
+  font-size: 34px;
   margin: 0 auto;
 }
 
 .write-report-button {
-  margin-top: 30px;
-  padding: 12px 24px;
+  margin-top: 32px;
+  padding: 13px 26px;
   border: none;
-  border-radius: 8px;
-  background: #b91c1c;
+  border-radius: var(--radius-md);
+  background: var(--danger);
   color: white;
-  font-size: 16px;
-  cursor: pointer;
+  font-size: 15px;
+  font-weight: 500;
+}
+.write-report-button:hover {
+  background: #dc2626;
 }
