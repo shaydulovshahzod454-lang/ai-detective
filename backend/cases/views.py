@@ -72,10 +72,15 @@ def clue_list_create(request):
 @api_view(['DELETE'])
 def clue_delete(request, clue_id):
     """
-    Bitta dalilni o'chiradi (foydalanuvchi xato qo'shgan bo'lsa).
+    Bitta dalilni o'chiradi. session_id URL query orqali talab qilinadi,
+    faqat shu sessiyaga tegishli dalil o'chirilishi mumkin.
     """
+    session_id = request.query_params.get('session_id')
+    if not session_id:
+        return Response({"error": "session_id kerak"}, status=status.HTTP_400_BAD_REQUEST)
+
     try:
-        clue = Clue.objects.get(id=clue_id)
+        clue = Clue.objects.get(id=clue_id, session_id=session_id)
     except Clue.DoesNotExist:
         return Response({"error": "Dalil topilmadi"}, status=status.HTTP_404_NOT_FOUND)
 

@@ -84,7 +84,7 @@ function ChatPage() {
 
   async function handleDeleteClue(clueId) {
     try {
-      await deleteClue(clueId);
+      await deleteClue(clueId, sessionId);
       setClues((prev) => prev.filter((c) => c.id !== clueId));
     } catch (err) {
       console.error(err);

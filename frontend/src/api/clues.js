@@ -17,6 +17,8 @@ export async function addClue(caseId, sessionId, text, sourceCharacterId = null)
   return response.data;
 }
 
-export async function deleteClue(clueId) {
-  await axiosInstance.delete(`/cases/clues/${clueId}/`);
+export async function deleteClue(clueId, sessionId) {
+  await axiosInstance.delete(`/cases/clues/${clueId}/`, {
+    params: { session_id: sessionId },
+  });
 }
