@@ -69,6 +69,29 @@ function CaseDetailPage() {
           </div>
         </div>
       ))}
+
+      {caseData.unassigned_characters && caseData.unassigned_characters.length > 0 && (
+        <div className="scene-block">
+          <h2>Boshqa personajlar</h2>
+          <div className="character-grid">
+            {caseData.unassigned_characters.map((character) => (
+              <div
+                key={character.id}
+                className="character-card"
+                onClick={() => handleCharacterClick(character.id)}
+              >
+                {character.image ? (
+                  <img src={character.image} alt={character.name} />
+                ) : (
+                  <div className="character-placeholder">👤</div>
+                )}
+                <p>{character.name}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      
       <button
         className="write-report-button"
         onClick={() => navigate(`/case/${caseId}/report`)}

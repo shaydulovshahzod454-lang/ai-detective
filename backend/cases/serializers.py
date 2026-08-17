@@ -44,14 +44,22 @@ class CaseListSerializer(serializers.ModelSerializer):
 class CaseDetailSerializer(serializers.ModelSerializer):
     """
     Bitta case ichiga kirilganda — to'liq ma'lumot: barcha scene va character'lar bilan.
-    DIQQAT: 'solution' maydoni bu yerda ham YO'Q — bu javobni frontend'ga
-    yuborib bo'lmaydi, aks holda foydalanuvchi "aldab" javobni ko'rib qo'yadi!
+    DIQQAT: 'solution' maydoni bu yerda ham YO'Q.
     """
     scenes = SceneSerializer(many=True, read_only=True)
+    unassigned_characters = serializers.SerializerMethodField()
 
     class Meta:
         model = Case
-        fields = ['id', 'title', 'description', 'scenes']
+        fields = ['id', 'title', 'description', 'scenes', 'unassigned_characters']
+
+    def get_unassigned_characters(self, obj):
+        """
+        Hech qanday scene'ga biriktirilmagan personajlar — bular ham
+        o'yinchiga ko'rinishi va suhbatlashish uchun ochiq bo'lishi kerak.
+        """
+        characters = obj.characters.filter(scene__isnull=True)
+        return CharacterListSerializer(characters, many=True, context=self.context).data
 
 class ClueSerializer(serializers.ModelSerializer):
     source_character_name = serializers.CharField(source='source_character.name', read_only=True)

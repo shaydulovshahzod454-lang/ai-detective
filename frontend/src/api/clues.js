@@ -1,19 +1,14 @@
-// ESKI:
-// import axios from 'axios';
-// const API_BASE_URL = 'http://127.0.0.1:8000/api/cases';
-
-// YANGI:
 import axiosInstance from './axiosInstance';
 
 export async function getClues(caseId, sessionId) {
-  const response = await axiosInstance.get(`${API_BASE_URL}/clues/`, {
+  const response = await axiosInstance.get('/cases/clues/', {
     params: { case_id: caseId, session_id: sessionId },
   });
   return response.data;
 }
 
 export async function addClue(caseId, sessionId, text, sourceCharacterId = null) {
-  const response = await axiosInstance.post(`${API_BASE_URL}/clues/`, {
+  const response = await axiosInstance.post('/cases/clues/', {
     case_id: caseId,
     session_id: sessionId,
     text: text,
@@ -23,5 +18,5 @@ export async function addClue(caseId, sessionId, text, sourceCharacterId = null)
 }
 
 export async function deleteClue(clueId) {
-  await axiosInstance.delete(`${API_BASE_URL}/clues/${clueId}/`);
+  await axiosInstance.delete(`/cases/clues/${clueId}/`);
 }
